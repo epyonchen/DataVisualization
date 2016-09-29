@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <title>map test</title>
+   <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+
+   <script src="https://d3js.org/d3-array.v1.min.js"></script>
+   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+   <script src="https://d3js.org/d3.v4.min.js"></script>
+   <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+   <style>
+      .chart3{
+         width:760px;
+         border:1px #bfbfbf solid;
+         background-color:#e6e6e6;
+
+         margin-top: 0px;
+         border-top: none;
+      }
+      .controller{
+         z-index: 100;
+         position:relative;
+         width:760px;
+         border:1px #bfbfbf solid;
+         background-color: #bfbfbf;
+         border-top-right-radius: 5px;
+         border-top-left-radius: 5px;
+         margin-top: 30px;
+         padding-bottom:15px;
+         padding-top:10px;
+
+      }
+
+      .scale{
+         position:relative;
+         top:-150px;
+         left:355px;
+         z-index: 5;
+         width:50px;
+         height:150px;
+         border: 1px solid #bfbfbf;
+         background-color: #f1f1f1;
+         border-radius:5px;
+      }
+
+      .ticks{
+
+         position:relative;
+         z-index:-1;
+         top:-5px;
+         margin: 0px;
+         width: 560px;
+         height:30px;
+         background-color: #bfbfbf;
+         width:100%;
+      }
+
+      .alert{
+         margin-top: 10px;
+         display:none;
+
+      }
+
+      #a{
+         color:#f1f1f1;
+         position:relative;
+         left:-195px;
+
+      }
+      #b{
+         color:#f1f1f1;
+         position:relative;
+         left:-98px;
+
+      }
+      #c{
+         color:#0099ff;
+
+      }
+      #d{
+         color:#f1f1f1;
+         position:relative;
+         left:98px;
+
+      }
+      #e{
+         color:#f1f1f1;
+         position:relative;
+         left:195px;
+
+      }
+
+
+      #steplist{
+         color: #bfbfbf;
+      }
+
+      input[type=range] {
+        -webkit-appearance: none;
+        margin: 18px 0;
+        width: 560px;
+      }
+      input[type=range]:focus {
+        outline: none;
+      }
+
+      input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 9px;
+        cursor: pointer;
+        background: #8c8c8c;
+        border-radius: 1.3px;
+        border: 0.2px solid #8c8c8c;
+      }
+
+      input[type=range]::-webkit-slider-thumb {
+
+        border: 1px solid #0099ff;
+        height: 36px;
+        width: 20px;
+        border-radius: 3px;
+        background: #0099ff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -14px;
+        transition: border 0.2s, background 0.2s;
+      }
+      input[type=range]:hover::-webkit-slider-thumb {
+         border: 1px solid #66ffcc;
+
+         border-radius: 3px;
+         background: #66ffcc;
+      }
+      input[type=range]:focus::-webkit-slider-thumb {
+
+         border: 1px solid #66ffcc;
+
+         border-radius: 3px;
+         background: #66ffcc;
+      }
+      input[type=range]:not(:focus)::-webkit-slider-thumb {
+
+         border: 1px solid #0099ff;
+         background: #0099ff;
+      }
+
+
+      .btn-group-justified{
+         outline: none;
+         width: 560px;
+      }
+      *:focus {
+          outline: none;
+      }
+      .btn,.btn-default{
+          border-color:white;
+          background-color:gray;
+          text-shadow: none;
+          background-image: none;
+          border: 1px solid gray;
+          color:#f2f2f2;
+
+      }
+      .btn-default.active, .btn-default.active.focus{
+          outline: none;
+          background-color: #0099ff;
+          color:white;
+          border-collapse:collapse;
+          box-shadow: none;
+          text-shadow: none;
+          border-color:#0099ff;
+      }
+
+
+   </style>
+   <script type="text/javascript">
+
+      function yearValue(data){
+
+         y = data;
+
+      }
+
+
+      function year(yearValue){
+         $(".slider").on("input",function(){
+            var value = $(".slider").val();
+            //console.log(value);
+            switch(value){
+               case "0":
+                  $("#a").css("color","#0099ff");
+                  $("#b").css("color","#f1f1f1");
+                  $("#c").css("color","#f1f1f1");
+                  $("#d").css("color","#f1f1f1");
+                  $("#e").css("color","#f1f1f1");
+                  yearValue(2000);
+                  break;
+               case "1":
+                  $("#a").css("color","#f1f1f1");
+                  $("#b").css("color","#0099ff");
+                  $("#c").css("color","#f1f1f1");
+                  $("#d").css("color","#f1f1f1");
+                  $("#e").css("color","#f1f1f1");
+                  yearValue(2006);
+                  break;
+               case "2":
+                  $("#a").css("color","#f1f1f1");
+                  $("#b").css("color","#f1f1f1");
+                  $("#c").css("color","#0099ff");
+                  $("#d").css("color","#f1f1f1");
+                  $("#e").css("color","#f1f1f1");
+                  yearValue(2007);
+                  break;
+               case "3":
+                  $("#a").css("color","#f1f1f1");
+                  $("#b").css("color","#f1f1f1");
+                  $("#c").css("color","#f1f1f1");
+                  $("#d").css("color","#0099ff");
+                  $("#e").css("color","#f1f1f1");
+                  yearValue(2008);
+                  break;
+               case "4":
+                  $("#a").css("color","#f1f1f1");
+                  $("#b").css("color","#f1f1f1");
+                  $("#c").css("color","#f1f1f1");
+                  $("#d").css("color","#f1f1f1");
+                  $("#e").css("color","#0099ff");
+                  yearValue(2009);
+                  break;
+               default:
+                  yearValue(0);
+
+            }
+         });
+         //console.log(data);
+
+      }
+
+      function categoryValue(data){
+         console.log(data);
+         //categoryValue.trigger('donec');
+
+      }
+      var data = {"c":0,"y":2000};
+
+      function category(categoryValue){
+
+         $('.btn-group').on('change', function() {
+            var category = $('input[name="options"]:checked').val();
+            //categoryValue(category);
+            drawMap(data)
+         });
+
+      }
+
+
+      function drawMap(d){
+
+         console.log(d);
+
+/////////////////////////////////// json ///////////////
+         d3.json("./statesEducation1.json",function(error,data){
+            if(error){
+               return console.log(error);
+            }
+            var statesData = data.states;// data for each state
+
+            //console.log(statesData);
+            d3.json("./USA.json", function(error, root) {
+               if (error)
+                    return console.error(error);
+
+
+               for(var i = 0;i<root.features.length;i++){
+                  var stateNameFromMap = root.features[i].properties.name;
+                  //console.log(stateNameFromMap);
+
+                  for(var j = 0; j<statesData.length;j++){
+
+                     var stateNameFromData = statesData[j].name;
+                     if(stateNameFromData == stateNameFromMap){
+                        console.log(stateNameFromData);
+
+
+                     }
+
+                  }
+               }
+               var opacity = 0.1;
+               var presentColor;
+               var state = null;
+               var previousColor;
+
+               svg.append('g').selectAll("path")
+                  .data(root.features)
+                  .enter()
+                  .append("path")
+                  .attr("stroke","white")
+                  .attr("stroke-width",1)
+                  .attr("d", path)
+                  .attr("fill", function(d){
+                     //console.log(d.properties.name);
+                     if(year == 0){
+                        var agba = "rgba(0,153,255,"+opacity+")";
+                        opacity = opacity+0.016;
+                        //console.log(opacity);
+                        return agba;
+
+                     }
+
+
+                     // if(d.properties.name == "Pennsylvania"){
+                     //    return "rgba(213,222,217,0.7)";
+                     //
+                     // }
+                     // else{
+                     //    return "rgba(000,000,000,0.7)";
+                     // }
+
+                  })
+                  .on("mouseover",function(d){
+                     //console.log(this);
+                     presentColor = $(this).attr("fill");
+                     d3.select(this)
+                           .style("opacity","0.5")
+                           .style("cursor","pointer");
+
+                  })
+                  .on("mouseout",function(d){
+                     d3.select(this)
+                        .style("opacity","1");
+
+                  })
+                  .on("click",function(d){
+                     if(state == null){
+                        state = $(this);
+                        previousColor = $(this).attr("fill");
+                        state.attr("fill","#ff9999");
+                        // got state name;
+                        //console.log(state);
+
+
+                     }
+                     else{
+                        state.attr("fill",previousColor);
+                        state = $(this);
+                        previousColor = $(this).attr("fill");
+                        state.attr("fill","#ff9999");
+                     }
+
+
+                  });
+
+            });
+         });
+
+      }
+
+
+
+      $(document).ready(function(){
+
+
+         category(drawMap);
+      });
+
+      // function xxx(){
+      //    var colorAccount = 7;
+      //
+      //    var table = $(".scale").children("table");
+      //    var rows = "";
+      //
+      //    for(var i = 0;i<colorAccount;i++){
+      //       var row = "<tr><td id = 'color"+i+"'></td><td id = 'percentage"+i+"'></td></tr>";
+      //       rows = rows +row;
+      //    }
+      //    console.log(table);
+      //    var json = {};
+      //    table.append(rows);
+      //    var color = ["#0099ff","#66ff33","#77aa32","#ff1150","#ffffff","ff1aff","#e6e600"];
+      //    for(var i = 0;i<colorAccount;i++){
+      //       var id = "#color"+i;
+      //       var pid = "#percentage"+i;
+      //       $(id).width("25px").height("20px");
+      //
+      //       $(id).css("background-color",color[i])
+      //
+      //       $(pid).append("50%");
+      //       console.log(id);
+      //
+      //    }
+      //
+      // }
+
+   </script>
+</head>
+<body>
+
+   <div class= "container">
+
+      <div class = "row">
+         <div class = "col-sm-12">
+
+            <center>
+
+               <div class = "controller">
+                  <input class = "slider" type="range" min="0" max="4" value="" step="1"  data-range-stepfactor = "1"/>
+
+                  <div class = "ticks">
+                     <span id = "a" aria-hidden="true">2000</span>
+                     <span id = "b" aria-hidden="true">2006</span>
+                     <span id = "c" aria-hidden="true">2007</span>
+                     <span id = "d" aria-hidden="true">2008</span>
+                     <span id = "e" aria-hidden="true">2009</span>
+                  </div>
+
+                  <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                      <input type="radio" name="options" id="option1" autocomplete="off" value = 0> Under Highschool
+                    </label>
+                    <label class="btn btn-default">
+                      <input type="radio" name="options" id="option2" autocomplete="off" value = 1> Banchelor and More
+                    </label>
+                    <label class="btn btn-default">
+                      <input type="radio" name="options" id="option3" autocomplete="off" value = 2> Advaned Degree
+                    </label>
+                  </div>
+
+               </div>
+               <div class = "chart3">
+               </div>
+               <div class = "scale">
+                  <table>
+
+                  </table>
+               </div>
+               <div class = "barChart">
+
+               </div>
+            </center>
+
+
+
+         </div>
+
+      </div>
+   </div>
+</body>
+</html>
