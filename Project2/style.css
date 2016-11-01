@@ -1,0 +1,73 @@
+body{
+   background-color: white;
+}
+
+.jumbotron{
+   margin-top:20px;
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: cover;
+   background-image: url(./beautiful-nature.jpg) ;
+   opacity:0.85;
+}
+
+.jumbotron h1,p{
+   color:#f2f2f2;
+}
+img{
+   width:100%;
+   height:auto;
+}
+
+h2{
+   color:#89af66;
+}
+
+.edges line {
+   stroke: #999;
+   stroke-opacity: 0.6;
+}
+
+.nodes circle {
+   stroke: #fff;
+   stroke-width: 1.5px;
+}
+
+
+.btn-group-justified{
+   outline: none;
+   width: 100%;
+}
+*:focus {
+   outline: none;
+}
+.btn,.btn-default{
+   border-color:white;
+   background-color:gray;
+   text-shadow: none;
+   background-image: none;
+   border: 1px solid gray;
+   color:#f2f2f2;
+
+}
+.btn-default.active, .btn-default.active.focus{
+   outline: none;
+   background-color: #89af66;
+   color:white;
+   border-collapse:collapse;
+   box-shadow: none;
+   text-shadow: none;
+   border-color:#89af66;
+}
+
+.chart1{
+   height:800px;
+}
+.chart2{
+   height:1100px;
+}
+iframe{
+   width:100%;
+   height:1100px;
+   border:none;
+}
